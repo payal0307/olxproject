@@ -1,0 +1,43 @@
+@page
+@model List<AdminAdViewModel>  // Replace with your actual ViewModel
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Ads Management</title>
+</head>
+<body>
+    <h1>Admin Ads Management</h1>
+    
+    @if (Model != null && Model.Count > 0)
+    {
+        <table>
+            <thead>
+                <tr>
+                    <th>Ad ID</th>
+                    <th>Admin ID</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Created At</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ad in Model)
+                {
+                    <tr>
+                        <td>@ad.AdId</td>
+                        <td>@ad.AdminId</td>
+                        <td>@ad.Reason</td>
+                        <td>@ad.Status</td>
+                        <td>@ad.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No admin ads found.</p>
+    }
+</body>
+</html>

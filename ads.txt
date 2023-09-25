@@ -1,0 +1,141 @@
+@model IEnumerable<MySQL_MACAddress.Models.macaddress>
+@{ ViewBag.Title = "Index"; }
+
+<table class="table">
+    <tr>
+        <th> MAC Address </th>
+        <th> Status </th>
+        <th> Actions </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            @Html.Hidden("id", item.idMACAddress)
+            <tr>
+                <td> @item.idMACAddress </td>
+                <td> @item.Status </td>
+                <td>
+                    <button type="submit" name="SubmitButton" value="Approve" class="btn btn-sm btn-success">Approve</button>
+                    <button type="submit" name="SubmitButton" value="Unapprove" class="btn btn-sm btn-danger">Unapprove</button>
+                </td>
+            </tr>
+         }
+    }
+</table>
+maccaddress.cs example
+Check this example. Don't just copy it because probably it won't work with your code. The view is a more important part here so look it.
+
+using System;
+namespace MySQL_MACAddress.Models
+{
+    public class macaddress
+    {
+        public macaddress()
+        {
+        }
+
+        public string Status { get; set; }
+        public int idMACAddress { get; set; }
+    }
+}
+Controller
+Check earlier answer.
+
+Share
+Improve this answer
+Follow
+answered Jan 20, 2019 at 10:38
+T.Nylund's user avatar
+T.Nylund
+62766 silver badges1111 bronze badges
+Add a comment
+0
+
+I suppose you have an HTML form in View made with Html-helpers. In your case, the following example code is probably the simplest one.
+
+View - Home/Index.cshtml
+<h2>Welcome to ASP.NET MVC!</h2>
+
+<!-- 
+If needed, check BeginForm parameters to send POST
+into right controller and action.
+-->
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <!-- second parameter is the value for id field. -->
+    @Html.Hidden("id", 2001)
+
+    <button type="submit" name="SubmitButton" value="Approve" class="btn btn-sm btn-success">Approve</button>
+    <button type="submit" name="SubmitButton" value="Unapprove" class="btn btn-sm btn-danger">Unapprove</button>
+}
+Controller - HomeController.cs
+using System.Net;
+using System.Web.Mvc;
+
+namespace FormTest.Controllers
+{
+    public class HomeController : Controller
+    {
+        // GET action for index
+        public ActionResult Index()
+        {
+            // Do something here ...
+            return View();
+        }
+
+        // POST action for index.
+        // Will use same path as GET
+        [HttpPost]
+        [ActionName("Index")]
+        public ActionResult IndexPost(string SubmitButton, int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            if (SubmitButton == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            //Redirect to GET Index
+            return RedirectToAction("Index");
+        }
+    }
+}
+
+@T.Nylund , Your thoughts? Thank you.
+
+View
+@model Enumerable<MySQL_MACAddress.Models.macaddress>  
+@{ ViewBag.Title = "Index"; }                   
+@using (Html.BeginForm())
+{
+@Html.AntiForgeryToken()
+
+<table class="table">
+<tr>      
+<th>
+@Html.DisplayNameFor(model => model.Status)
+</th>
+</tr>
+@foreach (var item in Model)
+{
+<tr>
+<td>
+@HtmlHidden("id", item.idMACAddress)
+</td>
+<td>
+@Html.DisplayFor(modelitem => item.Status)
+</td>
+<button type="submit" name="SubmitButton" value="Approve" class="btn btn-sm btn-success">Approve</button>
+<button type="submit" name="SubmitButton" value="Unapprove" class="btn btn-sm btn-danger">Unapprove</button>
+}

@@ -1,0 +1,51 @@
+ public ActionResult Registration(Registration model)
+        {
+            RegistrationRepo repo = new RegistrationRepo();
+
+            // Check if the email already exists in the database using the RegistrationRepo method
+            var isEmailAlreadyExists = repo.IsEmailAlreadyExists(model.userEmail);
+
+            if (isEmailAlreadyExists)
+            {
+                ModelState.AddModelError("userEmail", "This email already exists.");
+                return View(model);
+            }
+
+            // Proceed with registration logic
+            bool registrationResult = repo.Registration(model);
+
+            if (registrationResult)
+            {
+                return RedirectToAction("Login");
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Registration failed. Please try again.");
+                return View(model);
+            }
+        }
+
+------------------------------
+registrationrepo
+ public bool IsEmailAlreadyExists(string userEmail)
+        {
+            string query = "SELECT COUNT(*) FROM Users WHERE userEmail = @userEmail";
+
+            SqlCommand cmd = new SqlCommand(query, sqlcon);
+            cmd.Parameters.AddWithValue("@userEmail", userEmail);
+
+            if (sqlcon.State == ConnectionState.Closed)
+                sqlcon.Open();
+
+            int userCount = (int)cmd.ExecuteScalar();
+
+            return userCount > 0; // If userCount > 0, email already exists; otherwise, it doesn't
+        }
+        public bool Registration(Registration model)
+           {
+            if(IsEmailAlreadyExists(model.userEmail))
+        {
+                return false; // Email already exists
+            }
+            string query = "insertuser";
+            
